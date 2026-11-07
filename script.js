@@ -1,6 +1,7 @@
+
 /* =========================================
    ISAAC SMITH PORTFOLIO
-   JavaScript Interactions
+   Website Interactions
 ========================================= */
 
 // MOBILE NAVIGATION
@@ -9,63 +10,83 @@ const menuToggle = document.querySelector('.menu-toggle');
 const navLinks = document.querySelector('.nav-links');
 
 if (menuToggle && navLinks) {
-  menuToggle.addEventListener('click', () => {
-    navLinks.classList.toggle('active');
 
-    const isOpen = navLinks.classList.contains('active');
+  menuToggle.addEventListener('click', () => {
+
+    const isOpen = navLinks.classList.toggle('active');
 
     menuToggle.setAttribute('aria-expanded', isOpen);
-    menuToggle.innerHTML = isOpen ? '&times;' : '&#9776;';
+    menuToggle.setAttribute(
+      'aria-label',
+      isOpen ? 'Close navigation' : 'Open navigation'
+    );
+
   });
 
-  // Close menu after clicking a navigation link
+  // Close menu after clicking a link
+
   navLinks.querySelectorAll('a').forEach(link => {
+
     link.addEventListener('click', () => {
+
       navLinks.classList.remove('active');
+
       menuToggle.setAttribute('aria-expanded', 'false');
-      menuToggle.innerHTML = '&#9776;';
+      menuToggle.setAttribute('aria-label', 'Open navigation');
+
     });
+
   });
+
+  // Close menu when clicking outside
+
+  document.addEventListener('click', event => {
+
+    if (
+      !menuToggle.contains(event.target) &&
+      !navLinks.contains(event.target)
+    ) {
+
+      navLinks.classList.remove('active');
+
+      menuToggle.setAttribute('aria-expanded', 'false');
+      menuToggle.setAttribute('aria-label', 'Open navigation');
+
+    }
+
+  });
+
+}
+
+// AUTOMATIC COPYRIGHT YEAR
+
+const yearElement = document.querySelector('#year');
+
+if (yearElement) {
+  yearElement.textContent = new Date().getFullYear();
 }
 
 // SMOOTH SCROLLING
 
 document.querySelectorAll('a[href^="#"]').forEach(link => {
-  link.addEventListener('click', function (event) {
-    const target = document.querySelector(this.getAttribute('href'));
+
+  link.addEventListener('click', function(event) {
+
+    const target = document.querySelector(
+      this.getAttribute('href')
+    );
 
     if (target) {
+
       event.preventDefault();
 
       target.scrollIntoView({
         behavior: 'smooth',
         block: 'start'
       });
+
     }
+
   });
+
 });
-
-// SCROLL REVEAL ANIMATIONS
-
-const revealElements = document.querySelectorAll('.reveal');
-
-if ('IntersectionObserver' in window) {
-  const observer = new IntersectionObserver((entries, observer) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        observer.unobserve(entry.target);
-      }
-    });
-  }, {
-    threshold: 0.15
-  });
-
-  revealElements.forEach(element => {
-    observer.observe(element);
-  });
-} else {
-  revealElements.forEach(element => {
-    element.classList.add('visible');
-  });
-}
